@@ -4,6 +4,7 @@ import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import rootRouter from './routes/index';
+import { setupSwagger } from './config/swagger';
 
 connectDB();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/', rootRouter);
+
+setupSwagger(app);
 
 app.get("/health", (_req: Request, res: Response) => {
     return res.status(200).json({
