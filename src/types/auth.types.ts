@@ -35,7 +35,12 @@ export interface LoginRequest extends Request {
 
 export interface LoginResponse { 
     success: boolean; 
-    message: string; 
+    message: string;
+    user?: {
+        id: string,
+        name: string,
+        email: string
+    }
 }
 
 // Logout

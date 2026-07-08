@@ -8,6 +8,7 @@ export const connectDB = async(): Promise<void> => {
         }
 
         await mongoose.connect(mongoURI);
+        console.log('MongoDB Connected');
 
         process.on('SIGINT', async() => {
             await mongoose.connection.close();
