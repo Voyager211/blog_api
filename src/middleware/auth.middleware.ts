@@ -10,12 +10,12 @@ interface DecodedToken {
     id: string
 }
 
-export interface AuthenticatedRequest extends Request {
-    userId: string
+export interface AuthRequest extends Request {
+    user?: { id: string }
 }
 
-export const protectRoute = (_req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const token = _req.cookies?.token || _req.headers.authorization?.split(' ')[1];
+export const protectRoute = (_req: AuthRequest, res: Response, next: NextFunction) => {
+    const token = _req.cookies?.['token'] || _req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({
             success: false,
