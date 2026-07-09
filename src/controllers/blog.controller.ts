@@ -5,7 +5,7 @@ export interface AuthRequest extends Request {
     user?: { id: string }
 }
 
-export const createBlog = async(_req: AuthRequest, res: Response) => {
+export const createBlog = async (_req: AuthRequest, res: Response) => {
     try {
         const { title, content, tags, status } = _req.body;
         const userId = _req.user?.id;
@@ -92,6 +92,84 @@ export const getBlogById = async (_req: Request, res: Response) => {
         return res.status(500).json({
             success: false,
             message: 'Server error'
+        });
+    }
+}
+
+export const updateBlog = async (_req: AuthRequest, res: Response) => {
+    try {
+        const blog = await Blog.findById(_req.params['id']);
+
+        if (!blog) {
+            return res.status(404).json({
+                success: false,
+                message: "Blog not found"
+            });
+        }
+
+        if (blog.author.toString() !== _req.user?.id) {
+            return res.status(403).json({
+                success: false,
+                message: "Not authorized to update this blog"
+            });
+        }
+
+        const { title, content, tags, status } = _req.body;
+
+        const updatedBlog = await Blog.findByIdAndUpdate(
+            _req.params['id'],
+            { title, content, tags, status },
+            { new: true, runValidators: true }
+        );
+
+        console.log("Blog updated successfully!");
+
+        return res.status(200).json({
+            success: true,
+            data: updatedBlog,
+            message: "Blog updated successfully!"
+        });
+
+    } catch (error) {
+        console.error("Updated Blog Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error. Please try updating later."
+        });
+    }
+}
+
+
+export const deleteBlog = async (_req: AuthRequest, res: Response) => {
+    try {
+        const blog = await Blog.findById(_req.params['id']);
+
+        if (!blog) {
+            return res.status(404).json({
+                success: false,
+                message: "Blog not found"
+            });
+        }
+
+        if (blog.author.toString() !== _req.user?.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to delete this blog.'
+            });
+        }
+
+        await blog.deleteOne();
+
+        return res.status(200).json({
+            success: true,
+            message: `Deleted blog: ${blog.title}`
+        });
+
+    } catch (error) {
+        console.error("Server error: ", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
         });
     }
 }
