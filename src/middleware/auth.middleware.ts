@@ -26,7 +26,8 @@ export const protectRoute = (_req: AuthRequest, res: Response, next: NextFunctio
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
-        _req.userId = decoded.id;
+        _req.user = { id: decoded.id };
+
         return next();
 
     } catch (error) {
