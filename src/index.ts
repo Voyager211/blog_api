@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { connectDB } from './config/db';
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import rootRouter from './routes/index';
@@ -11,6 +12,7 @@ connectDB();
 const app = express();
 const port = Number(process.env['PORT']) || 3000;
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
